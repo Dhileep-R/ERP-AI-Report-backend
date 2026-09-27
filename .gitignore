@@ -1,18 +1,17 @@
-# Environment files
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables
 .env
 .env.*
 !.env.example
-
-# Dependencies
-node_modules/
-
-# Build output
-dist/
-build/
-
-# Logs
-*.log
-npm-debug.log*
 
 # IDE
 .vscode/
@@ -21,3 +20,20 @@ npm-debug.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Temporary files
+*.tmp
+*.temp
