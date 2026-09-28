@@ -22,7 +22,7 @@ def get_customers():
             """
             SELECT
                 name
-            FROM Customer
+            FROM customer
             ORDER BY name
             """
         )
@@ -61,10 +61,10 @@ def get_parts():
             """
             SELECT
                 id,
-                PartNumber,
-                PartName
-            FROM Part
-            ORDER BY PartName
+                partNumber,
+                partName
+            FROM part
+            ORDER BY partName
             """
         )
 
@@ -120,10 +120,10 @@ def get_sales_invoices(
                     c.id,
                     c.name AS CustomerName
 
-                FROM Customer c
+                FROM customer c
 
-                LEFT JOIN SalesInvoice si
-                    ON si.CustomerId = c.id
+                LEFT JOIN salesinvoice si
+                    ON si.customerId = c.id
 
                 WHERE si.id IS NULL
 
@@ -149,17 +149,17 @@ def get_sales_invoices(
                 """
                 SELECT
                     p.id,
-                    p.PartNumber,
-                    p.PartName
+                    p.partNumber,
+                    p.partName
 
-                FROM Part p
+                FROM part p
 
                 LEFT JOIN salesinvoicelineitem sil
-                    ON sil.PartId = p.id
+                    ON sil.partId = p.id
 
-                WHERE sil.PartId IS NULL
+                WHERE sil.partId IS NULL
 
-                ORDER BY p.PartName
+                ORDER BY p.partName
                 """
             )
 
@@ -187,7 +187,7 @@ def get_sales_invoices(
             if from_date:
 
                 where.append(
-                    "si.SalesInvoiceDate >= %s"
+                    "si.salesInvoiceDate >= %s"
                 )
 
                 params.append(from_date)
@@ -200,7 +200,7 @@ def get_sales_invoices(
 
                 where.append(
                     """
-                    si.SalesInvoiceDate
+                    si.salesInvoiceDate
                     < DATE_ADD(%s, INTERVAL 1 DAY)
                     """
                 )
@@ -249,13 +249,13 @@ def get_sales_invoices(
                         0
                     ) AS TotalSales
 
-                FROM Customer c
+                FROM customer c
 
-                INNER JOIN SalesInvoice si
-                    ON si.CustomerId = c.id
+                INNER JOIN salesinvoice si
+                    ON si.customerId = c.id
 
                 INNER JOIN salesinvoicelineitem sil
-                    ON sil.SalesOrderId = si.id
+                    ON sil.salesInvoiceId = si.id
 
                 {where_clause}
 
@@ -296,7 +296,7 @@ def get_sales_invoices(
             if from_date:
 
                 where.append(
-                    "si.SalesInvoiceDate >= %s"
+                    "si.salesInvoiceDate >= %s"
                 )
 
                 params.append(from_date)
@@ -309,7 +309,7 @@ def get_sales_invoices(
 
                 where.append(
                     """
-                    si.SalesInvoiceDate
+                    si.salesInvoiceDate
                     < DATE_ADD(%s, INTERVAL 1 DAY)
                     """
                 )
@@ -323,7 +323,7 @@ def get_sales_invoices(
             if part_number:
 
                 where.append(
-                    "p.PartNumber LIKE %s"
+                    "p.partNumber LIKE %s"
                 )
 
                 params.append(
@@ -346,8 +346,8 @@ def get_sales_invoices(
             query = f"""
                 SELECT
                     p.id AS PartId,
-                    p.PartNumber,
-                    p.PartName,
+                    p.partNumber,
+                    p.partName,
 
                     COUNT(DISTINCT si.id)
                         AS SalesInvoiceCount,
@@ -362,17 +362,17 @@ def get_sales_invoices(
                 FROM Part p
 
                 INNER JOIN salesinvoicelineitem sil
-                    ON sil.PartId = p.id
+                    ON sil.partId = p.id
 
-                INNER JOIN SalesInvoice si
-                    ON si.id = sil.SalesInvoiceId
+                INNER JOIN salesinvoice si
+                    ON si.id = sil.salesInvoiceId
 
                 {where_clause}
 
                 GROUP BY
                     p.id,
-                    p.PartNumber,
-                    p.PartName
+                    p.partNumber,
+                    p.partName
 
                 ORDER BY
                     TotalSales DESC
@@ -405,7 +405,7 @@ def get_sales_invoices(
         if sales_invoice_number:
 
             where.append(
-                "so.SalesInvoiceNumber LIKE %s"
+                "si.salesInvoiceNumber LIKE %s"
             )
 
             params.append(
@@ -439,13 +439,13 @@ def get_sales_invoices(
 
                     FROM salesinvoicelineitem sil_filter
 
-                    INNER JOIN Part p_filter
+                    INNER JOIN part p_filter
                         ON p_filter.id = sil_filter.PartId
 
                     WHERE
-                        sil_filter.SalesInvoiceId = si.id
+                        sil_filter.salesInvoiceId = si.id
 
-                        AND p_filter.PartNumber LIKE %s
+                        AND p_filter.partNumber LIKE %s
                 )
                 """
             )
@@ -461,7 +461,7 @@ def get_sales_invoices(
         if from_date:
 
             where.append(
-                "si.SalesInvoiceDate >= %s"
+                "si.salesInvoiceDate >= %s"
             )
 
             params.append(from_date)
@@ -474,7 +474,7 @@ def get_sales_invoices(
 
             where.append(
                 """
-                si.SalesInvoiceDate
+                si.salesInvoiceDate
                 < DATE_ADD(%s, INTERVAL 1 DAY)
                 """
             )
@@ -501,19 +501,19 @@ def get_sales_invoices(
         query = f"""
             SELECT
                 si.id,
-                si.SalesInvoiceNumber,
-                si.SalesInvoiceDate,
+                si.salesInvoiceNumber,
+                si.salesInvoiceDate,
                 c.name AS CustomerName
 
-            FROM SalesInvoice si
+            FROM salesinvoice si
 
-            LEFT JOIN Customer c
+            LEFT JOIN customer c
                 ON c.id = si.CustomerId
 
             {where_clause}
 
             ORDER BY
-                si.SalesInvoiceDate DESC,
+                si.salesInvoiceDate DESC,
                 si.id DESC
         """
 
@@ -551,23 +551,23 @@ def get_sales_invoices(
 
         items_query = f"""
             SELECT
-                sil.SalesInvoiceId,
-                sil.PartId,
-                p.PartNumber,
-                p.PartName,
+                sil.salesInvoiceId,
+                sil.partId,
+                p.partNumber,
+                p.partName,
                 sil.price,
                 sil.quantity
 
             FROM salesinvoicelineitem sil
 
-            LEFT JOIN Part p
-                ON p.id = sil.PartId
+            LEFT JOIN part p
+                ON p.id = sil.partId
 
             WHERE
-                sil.SalesInvoiceId IN ({placeholders})
+                sil.salesInvoiceId IN ({placeholders})
 
             ORDER BY
-                sil.SalesInvoiceId
+                sil.salesInvoiceId
         """
 
         cursor.execute(
@@ -585,7 +585,7 @@ def get_sales_invoices(
 
         for item in items:
 
-            order_id = item["SalesInvoiceId"]
+            order_id = item["salesInvoiceId"]
 
             if order_id not in items_by_order:
 
@@ -596,13 +596,13 @@ def get_sales_invoices(
 
             items_by_order[order_id].append(
                 {
-                    "PartId": item["PartId"],
+                    "partId": item["partId"],
 
-                    "PartNumber":
-                        item["PartNumber"],
+                    "partNumber":
+                        item["partNumber"],
 
-                    "PartName":
-                        item["PartName"],
+                    "partName":
+                        item["partName"],
 
                     "price": price,
 
