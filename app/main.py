@@ -34,7 +34,7 @@ async def root():
     }
 
 
-@app.get("/health")
+@app.get("/healthCheck")
 async def health():
     return {
         "success": True,
