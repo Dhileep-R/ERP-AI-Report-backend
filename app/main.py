@@ -5,12 +5,26 @@ from app.api.parts import router as parts_router
 from app.api.sales_invoices import router as sales_invoices_router
 from app.api.ai import router as ai_router
 from app.database.connection import get_connection
+from fastapi import Request
 
 
 app = FastAPI(
     title="ERP AI Assistant",
     version="1.0.0"
 )
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    print(f"Incoming request: {request.method} {request.url.path}")
+
+    response = await call_next(request)
+
+    print(
+        f"Response: {request.method} "
+        f"{request.url.path} - {response.status_code}"
+    )
+
+    return response
 
 app.add_middleware(
     CORSMiddleware,
