@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-
+import os
 from mcp import ClientSession
 from mcp.client.stdio import stdio_client
 from mcp import StdioServerParameters
@@ -26,6 +26,7 @@ server_parameters = StdioServerParameters(
         SERVER_MODULE,
     ],
     cwd=str(PROJECT_ROOT),
+    env={**os.environ},
 )
 
 
