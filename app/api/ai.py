@@ -1,12 +1,14 @@
 from typing import List, Optional
 import traceback
-
+import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.services.ai_service import run_agent
 
 router = APIRouter(prefix="/ai", tags=["AI"])
+
+logger = logging.getLogger(__name__)
 
 
 class ChatHistoryMessage(BaseModel):
@@ -41,11 +43,13 @@ async def chat(request: ChatRequest):
                 for message in request.history
             ]
 
+            logger.info("AI chat request received")
+
         result = await run_agent(
             request.prompt.strip(),
             history
         )
-
+        logger.info("AI chat request completed")
         return result
 
     except HTTPException:

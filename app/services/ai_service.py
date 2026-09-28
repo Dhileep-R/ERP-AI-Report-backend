@@ -1,6 +1,6 @@
 import json
 import os
-
+import sys
 from groq import AsyncGroq
 
 from app.mcp.mcp_client import (
@@ -926,6 +926,9 @@ async def run_agent(
                     tool_name,
                     arguments_data
                 )
+
+                print(f"MCP tool called: {tool_name}",file=sys.stderr,flush=True)
+                print(f"MCP tool result: {result}",file=sys.stderr,flush=True)
 
             except Exception as error:
 
