@@ -33,6 +33,7 @@ async def chat(request: ChatRequest):
             )
 
         history = []
+        logger.info(f"Received chat request: {request.prompt}")
 
         if request.history:
             history = [
@@ -43,13 +44,10 @@ async def chat(request: ChatRequest):
                 for message in request.history
             ]
 
-            logger.info("AI chat request received")
-
         result = await run_agent(
             request.prompt.strip(),
             history
         )
-        logger.info("AI chat request completed")
         return result
 
     except HTTPException:
