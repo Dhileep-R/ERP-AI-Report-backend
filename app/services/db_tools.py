@@ -359,7 +359,7 @@ def get_sales_invoices(
                         0
                     ) AS TotalSales
 
-                FROM Part p
+                FROM part p
 
                 INNER JOIN salesinvoicelineitem sil
                     ON sil.partId = p.id
