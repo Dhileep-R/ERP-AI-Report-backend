@@ -33,7 +33,7 @@ async def chat(request: ChatRequest):
             )
 
         history = []
-        logger.info(f"Received chat request: {request.prompt}")
+        print(f"Received chat request: {request.prompt}")
 
         if request.history:
             history = [
